@@ -26,7 +26,7 @@ db.connect(err => {
   console.log("✅ Conectado a MySQL (practicas)");
 });
 
-app.get("/all-data", async (_req, res) => {
+app.get("/api/noticias", async (_req, res) => {
   try {
     const sql = `
       SELECT
@@ -34,15 +34,29 @@ app.get("/all-data", async (_req, res) => {
         n.titulo,
         n.url_noticia,
         n.clasificacion,
-        p.url_pagina AS pagina_origen
+        n.id_pagina_fuente
       FROM noticias n
-      JOIN paginas p
-        ON n.id_pagina_fuente = p.id_pagina;
     `;
     const [rows] = await db.promise().query(sql);
     res.json(rows);
   } catch (error) {
-    console.error("Error en /all-data:", error.message);
+    console.error("Error en /api/noticias:", error.message);
+    res.status(500).send("Error en la consulta");
+  }
+});
+
+app.get("/api/paginas", async (_req, res) => {
+  try {
+    const sql = `
+      SELECT
+        p.id_pagina,
+        p.url_pagina
+      FROM paginas p
+    `;
+    const [rows] = await db.promise().query(sql);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error en /api/paginas:", error.message);
     res.status(500).send("Error en la consulta");
   }
 });

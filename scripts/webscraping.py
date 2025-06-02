@@ -1,7 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import sys
+import os
+from obtFecha import detectar_fecha
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from SQL.extraer import extraer_urls
+
 
 urls = []
 
@@ -32,6 +38,7 @@ for url in urls:
     titulos = []
     for el in elementos:
         texto = el.get_text(strip=True)
+        datatime = detectar_fecha(el)
         # 1) Si 'el' es <a>, lo usamos, si no buscamos el padre <a>
         if el.name == "a":
             link_tag = el
@@ -39,10 +46,12 @@ for url in urls:
             link_tag = el.find_parent("a")
         href = link_tag.get("href", "") if link_tag else ""
         url_completa = urljoin(url[0], href)
+        
 
         titulos.append({
             "titulo": texto,
-            "url": url_completa
+            "url": url_completa,
+            "fecha": datatime
         })
     titulos_por_pagina[url] = titulos or [{"titulo": "— No se encontró ningún título —", "url": ""}]
 
@@ -52,6 +61,14 @@ for url in urls:
 #    for i, item in enumerate(items, 1):
 #       print(f"  {i}. {item['titulo']}")
 #       print(f"     🔗 {item['url']}")
+#       print(f"       {item['fecha']}")
 
 
 #Web sacrpping de las paginas de noticias
+
+
+
+
+
+
+

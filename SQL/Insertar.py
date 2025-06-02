@@ -12,8 +12,8 @@ def accion_inder(urls):
 
 def insertar_noticia(noticias_list):
     sql = """
-    INSERT INTO noticias (titulo, url_noticia, clasificacion, id_pagina_fuente)
-    VALUES (%s, %s, %s, %s)
+    INSERT INTO noticias (titulo, fecha, url_noticia, clasificacion, id_pagina_fuente)
+    VALUES (%s, %s, %s, %s, %s)
     """
     # 1) Prepara lista de tuplas
     param_list = [
