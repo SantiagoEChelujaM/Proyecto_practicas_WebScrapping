@@ -32,6 +32,7 @@ app.get("/api/noticias", async (_req, res) => {
       SELECT
         n.id_noticia,
         n.titulo,
+        n.fecha,
         n.url_noticia,
         n.clasificacion,
         n.id_pagina_fuente

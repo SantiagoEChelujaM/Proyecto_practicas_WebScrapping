@@ -1,8 +1,8 @@
   // 'use client'; 
 
-  import { BartChartPaginas } from '@/components/clasfiPagina';
-  import { PaginaTable } from '@/components/paginas';
-  import { NoticiasTable } from '@/components/table_noticas';
+  import { BartChartPaginas } from '@/components/ui/main/clasfiPagina';
+  import { PaginaTable } from '@/components/ui/main/paginas';
+  import { NoticiasTable } from '@/components/ui/main/table_noticas';
   import { Card, Divider, Select, SelectItem } from '@tremor/react';
 
   function ContentPlaceholder() {

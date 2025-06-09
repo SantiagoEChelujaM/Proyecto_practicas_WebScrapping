@@ -8,8 +8,8 @@ import {
   TableHeaderCell,
   TableRoot,
   TableRow,
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/Table"
+import { Badge } from "@/components/Badge"
 
 interface Noticia {
   id_noticia: number

@@ -1,74 +1,74 @@
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-import sys
-import os
-from obtFecha import detectar_fecha
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from SQL.extraer import extraer_urls
+import pandas as pd
+from sentiment_analysis_spanish import sentiment_analysis
+from transformers import pipeline
+from transform import datos_nuevos
 
 
-urls = []
-
-extraer_urls(urls)
-
-headers = {
-    "User-Agent": "MiScraperBot/1.0 (+https://tu-sitio.com/info)"
-}
-
-# Tu selector global; ajústalo si es necesario
-CSS_SELECTOR = "h2.headline a, a.headline, h2 > a, h3 > a, div > a > h2"
+datos = datos_nuevos()
 
 
-titulos_por_pagina = {}
+# Instanciar el analizador léxico en español
+lex = sentiment_analysis.SentimentAnalysisSpanish()
 
-for url in urls:
-    try:
-        resp = requests.get(url[0], headers=headers, timeout=10)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Error al descargar {url[0]}: {e}")
-        continue
+# 1) Modelo multilingüe de Transformers para clasificación de sentimiento
+clf = pipeline(
+    "sentiment-analysis",
+    model="nlptown/bert-base-multilingual-uncased-sentiment",
+    tokenizer="nlptown/bert-base-multilingual-uncased-sentiment",
+    return_all_scores=True
+)
 
-    soup = BeautifulSoup(resp.text, "html.parser")
-    elementos = soup.select(CSS_SELECTOR)
-    
-    # Aquí extraemos texto y URL
-    titulos = []
-    for el in elementos:
-        texto = el.get_text(strip=True)
-        datatime = detectar_fecha(el)
-        # 1) Si 'el' es <a>, lo usamos, si no buscamos el padre <a>
-        if el.name == "a":
-            link_tag = el
-        else:
-            link_tag = el.find_parent("a")
-        href = link_tag.get("href", "") if link_tag else ""
-        url_completa = urljoin(url[0], href)
-        
+# --- Funciones de mapeo ---
+#def etiqueta_lex(texto, umbral=0.15):
+#    """
+#    Usa el analizador léxico para asignar una etiqueta:
+#    - 'positivo' si score > umbral
+#    - 'negativo' si score < -umbral
+#    - 'neutral' si |score| <= umbral
+#    Devuelve tupla (etiqueta, score).
+#    """
+#    score = lex.sentiment(texto)
+#    if abs(score) < umbral:
+#        return "neutral", score
+#    return ("positivo", score) if score > 0 else ("negativo", score)
 
-        titulos.append({
-            "titulo": texto,
-            "url": url_completa,
-            "fecha": datatime
-        })
-    titulos_por_pagina[url] = titulos or [{"titulo": "— No se encontró ningún título —", "url": ""}]
+def etiqueta_transformers(texto):
+    """
+    Usa el pipeline de Transformers para obtener predicciones de 1 a 5 estrellas,
+    luego las convierte en etiquetas:
+    - 1–2 estrellas → 'negativo'
+    - 3 estrellas   → 'neutral'
+    - 4–5 estrellas → 'positivo'
+    Devuelve tupla (etiqueta, score de la mejor predicción).
+    """
+    salida = clf(texto)[0]
+    mejor = max(salida, key=lambda x: x["score"])
+    estrellas = int(mejor["label"].split()[0])
+    if estrellas <= 2:
+        return "negativo", mejor["score"]
+    elif estrellas == 3:
+        return "neutral", mejor["score"]
+    else:
+        return "positivo", mejor["score"]
 
-# Imprimimos resultados
-for pagina, items in titulos_por_pagina.items():
-    print(f"\nPágina: {pagina}")
-    for i, item in enumerate(items, 1):
-       print(f"  {i}. {item['titulo']}")
-       print(f"     🔗 {item['url']}")
-       print(f"       {item['fecha']}")
+# --- Procesamiento de todos los títulos ---
+noticias = []
 
+# Contador por página (si deseas reiniciar por cada id_pagina_fuente, puedes agrupar después)
+for idx, row in datos.iterrows():
+    titulo = row["titulo"]
+    etiqueta, score = etiqueta_transformers(titulo)
 
-#Web sacrpping de las paginas de noticias
+    noticias.append({
+        "clasificacion": etiqueta,
+        "titulo": titulo,
+        "fecha": row['fecha'],
+        "url": row["url"],
+        "id_pagina_fuente": row["id_pagina"]
+    })
 
+# Crear nuevo DataFrame con clasificaciones
+df_clasificadas = pd.DataFrame(noticias)
+print(df_clasificadas)
 
-
-
-
-
-
+#Anaisis de los titulos y se le clasifica una categoria

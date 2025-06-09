@@ -1,4 +1,4 @@
-// Tremor Table [v1.0.0]
+// Tremor Table [v0.0.3]
 
 import React from "react"
 
@@ -12,6 +12,7 @@ const TableRoot = React.forwardRef<
     ref={forwardedRef}
     // Activate if table is used in a float environment
     // className="flow-root"
+    className="overflow-x-auto"
   >
     <div
       // make table scrollable on mobile
@@ -62,7 +63,7 @@ const TableHeaderCell = React.forwardRef<
     ref={forwardedRef}
     className={cx(
       // base
-      "border-b px-4 py-3.5 text-left text-sm font-semibold",
+      "whitespace-nowrap border-b px-4 py-3.5 text-left text-sm font-semibold",
       // text color
       "text-gray-900 dark:text-gray-50",
       // border color
@@ -101,8 +102,8 @@ const TableRow = React.forwardRef<
   <tr
     ref={forwardedRef}
     className={cx(
-      "[&_td:last-child]:pr-4 [&_th:last-child]:pr-4",
-      "[&_td:first-child]:pl-4 [&_th:first-child]:pl-4",
+      "sm:[&_td:last-child]:pr-6 sm:[&_th:last-child]:pr-6",
+      "sm:[&_td:first-child]:pl-6 sm:[&_th:first-child]:pl-6",
       className,
     )}
     {...props}
@@ -119,7 +120,7 @@ const TableCell = React.forwardRef<
     ref={forwardedRef}
     className={cx(
       // base
-      "p-4 text-sm",
+      "whitespace-nowrap p-4 text-sm",
       // text color
       "text-gray-600 dark:text-gray-400",
       className,

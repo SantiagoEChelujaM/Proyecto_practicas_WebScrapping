@@ -1,10 +1,9 @@
-// Tremor BarChart [v1.0.0]
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// Tremor BarChart [v0.2.1]
 
 "use client"
 
-import React from "react"
 import { RiArrowLeftSLine, RiArrowRightSLine } from "@remixicon/react"
+import React from "react"
 import {
   Bar,
   CartesianGrid,
@@ -16,14 +15,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-import type { AxisDomain } from "recharts/types/util/types"
+import { AxisDomain } from "recharts/types/util/types"
 
 import {
   AvailableChartColors,
+  AvailableChartColorsKeys,
   constructCategoryColors,
   getColorClassName,
   getYAxisDomain,
-  type AvailableChartColorsKeys,
 } from "@/lib/chartUtils"
 import { useOnWindowResize } from "@/lib/useOnWindowResize"
 import { cx } from "@/lib/utils"
@@ -108,7 +107,7 @@ const LegendItem = ({
     <li
       className={cx(
         // base
-        "group inline-flex flex-nowrap items-center gap-1.5 rounded-sm px-2 py-1 whitespace-nowrap transition",
+        "group inline-flex flex-nowrap items-center gap-1.5 whitespace-nowrap rounded px-2 py-1 transition",
         hasOnValueChange
           ? "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
           : "cursor-default",
@@ -120,16 +119,16 @@ const LegendItem = ({
     >
       <span
         className={cx(
-          "size-2 shrink-0 rounded-xs",
+          "size-2 shrink-0 rounded-sm",
           getColorClassName(color, "bg"),
           activeLegend && activeLegend !== name ? "opacity-40" : "opacity-100",
         )}
-        aria-hidden={true}
+        aria-hidden="true"
       />
       <p
         className={cx(
           // base
-          "truncate text-xs whitespace-nowrap",
+          "truncate whitespace-nowrap text-xs",
           // text color
           "text-gray-700 dark:text-gray-300",
           hasOnValueChange &&
@@ -177,7 +176,7 @@ const ScrollButton = ({ icon, onClick, disabled }: ScrollButtonProps) => {
       type="button"
       className={cx(
         // base
-        "group inline-flex size-5 items-center truncate rounded-sm transition",
+        "group inline-flex size-5 items-center truncate rounded transition",
         disabled
           ? "cursor-not-allowed text-gray-400 dark:text-gray-600"
           : "cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-50",
@@ -322,7 +321,7 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
           "flex h-full",
           enableLegendSlider
             ? hasScroll?.right || hasScroll?.left
-              ? "snap-mandatory items-center overflow-auto pr-12 pl-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              ? "snap-mandatory items-center overflow-auto pl-4 pr-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               : ""
             : "flex-wrap",
         )}
@@ -342,7 +341,7 @@ const Legend = React.forwardRef<HTMLOListElement, LegendProps>((props, ref) => {
           <div
             className={cx(
               // base
-              "absolute top-0 right-0 bottom-0 flex h-full items-center justify-center pr-1",
+              "absolute bottom-0 right-0 top-0 flex h-full items-center justify-center pr-1",
               // background color
               "bg-white dark:bg-gray-950",
             )}
@@ -481,14 +480,14 @@ const ChartTooltip = ({
                 <span
                   aria-hidden="true"
                   className={cx(
-                    "size-2 shrink-0 rounded-xs",
+                    "size-2 shrink-0 rounded-sm",
                     getColorClassName(color, "bg"),
                   )}
                 />
                 <p
                   className={cx(
                     // base
-                    "text-right whitespace-nowrap",
+                    "whitespace-nowrap text-right",
                     // text color
                     "text-gray-700 dark:text-gray-300",
                   )}
@@ -499,7 +498,7 @@ const ChartTooltip = ({
               <p
                 className={cx(
                   // base
-                  "text-right font-medium whitespace-nowrap tabular-nums",
+                  "whitespace-nowrap text-right font-medium tabular-nums",
                   // text color
                   "text-gray-900 dark:text-gray-50",
                 )}
@@ -771,8 +770,8 @@ const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
                   position="insideLeft"
                   style={{ textAnchor: "middle" }}
                   angle={-90}
-                  offset={-15}
-                  className="fill-gray-800 text-sm font-medium dark:fill-gray-200"
+                  offset={-10}
+                  className="fill-gray-500 text-xs font-normal dark:fill-gray-500"
                 >
                   {yAxisLabel}
                 </Label>

@@ -1,13 +1,17 @@
-from SQL.conexion import conexion, cone
+from SQL.conexion import conexion
 
 def insertar_urls(url):
     sql = "INSERT INTO paginas(url_pagina) VALUES (%s)"
-    cone.execute(sql, (url,))
-    conexion.commit()
-
-def accion_inder(urls):
-    for i in urls:
-        insertar_urls(i)
+    try:
+        conn = conexion()
+        cursor = conn.cursor()
+        cursor.execute(sql, (url,))
+        conn.commit()
+    except Exception as e:
+        print("Error al insertar URL:", e)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def insertar_noticia(noticias_list):
@@ -15,15 +19,18 @@ def insertar_noticia(noticias_list):
     INSERT INTO noticias (titulo, fecha, url_noticia, clasificacion, id_pagina_fuente)
     VALUES (%s, %s, %s, %s, %s)
     """
-    # 1) Prepara lista de tuplas
     param_list = [
-        (n['titulo'], n['url'], n['clasificacion'], n['id_pagina'])
+        (n['titulo'], n['fecha'], n['url'], n['clasificacion'], n['id_pagina_fuente'])
         for n in noticias_list
     ]
-    # 2) Ejecuta todos de golpe
-    cone.executemany(sql, param_list)
-    conexion.commit()
-    print(f"{len(param_list)} noticias insertadas en bloque.")
-
-
-
+    try:
+        conn = conexion()
+        cursor = conn.cursor()
+        cursor.executemany(sql, param_list)
+        conn.commit()
+        print(f"{len(param_list)} noticias insertadas en bloque.")
+    except Exception as e:
+        print("Error al insertar noticias:", e)
+    finally:
+        cursor.close()
+        conn.close()
