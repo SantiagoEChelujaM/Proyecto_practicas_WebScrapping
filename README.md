@@ -37,9 +37,6 @@ Data Source: Web scraping with BeautifulSoup (Python)
 bash
 Copiar
 Editar
-# Clone the project
-git clone https://github.com/your_username/dashboard-project.git
-
 # Frontend
 cd frontend
 npm install
